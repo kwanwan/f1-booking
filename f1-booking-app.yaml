@@ -1,0 +1,60 @@
+# Copyright (c) 2021, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+apiVersion: clusters.verrazzano.io/v1alpha1
+kind: MultiClusterApplicationConfiguration
+metadata:
+  name: f1-booking-service-appconf
+  namespace: f1
+spec:
+  template:
+    metadata:
+      annotations:
+        version: v1.0.0
+        description: "F1 Booking Service application"
+    spec:
+      components:
+        - componentName: f1-booking-service
+          traits:
+            - trait:
+                apiVersion: oam.verrazzano.io/v1alpha1
+                kind: MetricsTrait
+                spec:
+                    scraper: verrazzano-system/vmi-system-prometheus-0
+                    port: 7000
+            - trait:
+                apiVersion: oam.verrazzano.io/v1alpha1
+                kind: IngressTrait
+                metadata:
+                  name: f1-booking-ingress
+                spec:
+                  rules:
+                    - paths:
+                        - path: "/f1booking"
+                          pathType: Prefix
+        - componentName: f1-seat-booking-service
+          traits:
+            - trait:
+                apiVersion: oam.verrazzano.io/v1alpha1
+                kind: MetricsTrait
+                spec:
+                    scraper: verrazzano-system/vmi-system-prometheus-0
+                    port: 7001
+        - componentName: f1-payment-service
+          traits:
+            - trait:
+                apiVersion: oam.verrazzano.io/v1alpha1
+                kind: MetricsTrait
+                spec:
+                    scraper: verrazzano-system/vmi-system-prometheus-0
+                    port: 7002
+        - componentName: lra-coordinator
+          traits:
+            - trait:
+                apiVersion: oam.verrazzano.io/v1alpha1
+                kind: MetricsTrait
+                spec:
+                    scraper: verrazzano-system/vmi-system-prometheus-0
+                    port: 8080
+  placement:
+    clusters:
+      - name: local
