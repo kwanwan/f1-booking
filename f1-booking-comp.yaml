@@ -1,0 +1,113 @@
+# Copyright (c) 2021, 2022, Oracle and/or its affiliates.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+#
+#Component 1 - F1 Booking Service
+#
+apiVersion: core.oam.dev/v1alpha2
+kind: Component
+metadata:
+  name: f1-booking-service
+  namespace: f1
+spec:
+  workload:
+    apiVersion: oam.verrazzano.io/v1alpha1
+    kind: VerrazzanoHelidonWorkload
+    metadata:
+      name: f1-booking-service
+      labels:
+        app: f1-booking-service
+        version: v1
+    spec:
+      deploymentTemplate:
+        metadata:
+          name: f1-booking-service
+        podSpec:
+          containers:
+            - name: f1-booking-service
+              image: "phx.ocir.io/stevengreenberginc/devlive/f1/f1-booking-service:1.0"
+              ports:
+                - containerPort: 7000
+                  name: http
+---
+#
+#Component 2 - F1 Seat Booking Service
+#
+apiVersion: core.oam.dev/v1alpha2
+kind: Component
+metadata:
+  name: f1-seat-booking-service
+  namespace: f1
+spec:
+  workload:
+    apiVersion: oam.verrazzano.io/v1alpha1
+    kind: VerrazzanoHelidonWorkload
+    metadata:
+      name: f1-seat-booking-service
+      labels:
+        app: f1-seat-booking-service
+        version: v1
+    spec:
+      deploymentTemplate:
+        metadata:
+          name: f1-seat-booking-service
+        podSpec:
+          containers:
+            - name: f1-seat-booking-service
+              image: "phx.ocir.io/stevengreenberginc/devlive/f1/f1-seat-booking-service:1.0"
+              ports:
+                - containerPort: 7001
+                  name: http
+---
+#
+#Component 3 - F1 Payment Service
+#
+apiVersion: core.oam.dev/v1alpha2
+kind: Component
+metadata:
+  name: f1-payment-service
+  namespace: f1
+spec:
+  workload:
+    apiVersion: oam.verrazzano.io/v1alpha1
+    kind: VerrazzanoHelidonWorkload
+    metadata:
+      name: f1-payment-service
+      labels:
+        app: f1-payment-service
+        version: v1
+    spec:
+      deploymentTemplate:
+        metadata:
+          name: f1-payment-service
+        podSpec:
+          containers:
+            - name: f1-payment-service
+              image: "phx.ocir.io/stevengreenberginc/devlive/f1/f1-payment-service:1.0"
+              ports:
+                - containerPort: 7002
+                  name: http
+---
+#
+#Component 4 - LRA Coordinator - Narayana
+#
+apiVersion: core.oam.dev/v1alpha2
+kind: Component
+metadata:
+  name: lra-coordinator
+  namespace: f1
+spec:
+  workload:
+    apiVersion: core.oam.dev/v1alpha2
+    kind: ContainerizedWorkload
+    metadata:
+      name: lra-coordinator
+      labels:
+        app: lra-coordinator
+        version: v1
+    spec:
+      containers:
+      - name: lra-coordinator
+        image: "phx.ocir.io/stevengreenberginc/devlive/f1/lra-coordinator:5.12.1.Final"
+        ports:
+          - containerPort: 8080
+            name: http
